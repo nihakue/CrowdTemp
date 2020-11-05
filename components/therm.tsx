@@ -1,27 +1,34 @@
-export function Thermometer({x='65.782l9', y='65.782l9'}) {
+function Milestone({label, milestone, distance, topY, color, reverse=false}) {
+    const progressHeight = (reverse ? 1 - milestone : milestone) * distance;
+    const progressTop = reverse? topY : topY + (distance - progressHeight)
+    const x = reverse ? 95 : 0;
+    const y = reverse ? progressTop + progressHeight : progressTop
     return (
-        <svg width="1428" height="1428" xmlns="http://www.w3.org/2000/svg">
         <g>
-        <title>background</title>
-        <rect fill="none" id="canvas_background" height="6002" width="8002" y="-1" x="-1"/>
+            <rect x="15" height={`${progressHeight}`} y={`${progressTop}`} width="100%" mask="url(#mask2)" fill={color}></rect>
+            {label && <text dominantBaseline="hanging" textAnchor="start" x={`${x}`} y={y + 2}>{label}</text> }
+            {label && <line x1={reverse ? 69 : x} y1={y} x2={reverse ? x + 35 : x + 65} y2={y} stroke="black" strokeWidth="1"></line> }
         </g>
-        <g>
-        <title>Layer 1</title>
-        <g id="icon">
-        <path id="svg_1" fill="#dbe2eb" d="m75.56,74.06l0,-61.5a11.56,11.56 0 0 0 -11.56,-11.56a11.56,11.56 0 0 0 -11.56,11.559l0,61.5a27.743,27.743 0 1 0 23.12,0l0,0.001z"/>
-        <path id="svg_2" fill="#ef5361" d={`m64,120.58107q-0.59,0 -1.185,-0.033a21.349,21.349 0 0 1 -19.879,-20.806a21.1,21.1 0 0 1 12.293,-19.354l3.89,-1.788l0,-${x}.762,0l0,${y}.89,1.788a21.052,21.052 0 0 1 -8.771,40.193z`}/>
-        <path id="svg_3" fill="#da2a47" d="m85.063,99.255a21.074,21.074 0 0 1 -21.063,21.07c-0.4,0 -0.79,-0.011 -1.191,-0.033a20.928,20.928 0 0 1 -13.757,-6.345a20.138,20.138 0 0 0 7.78,2.026c0.39,0.022 0.79,0.033 1.18,0.033a21.04,21.04 0 0 0 15.118,-35.706a21.119,21.119 0 0 1 11.933,18.955z"/>
-        <g id="svg_4" fill="#2f3a5a">
-            <path id="svg_5" d="m90.734,66.666l-9.275,0a1,1 0 0 1 0,-2l9.275,0a1,1 0 0 1 0,2z"/>
-            <path id="svg_6" d="m87.747,58.026l-6.288,0a1,1 0 0 1 0,-2l6.288,0a1,1 0 0 1 0,2z"/>
-            <path id="svg_7" d="m90.734,50.04l-9.275,0a1,1 0 0 1 0,-2l9.275,0a1,1 0 0 1 0,2z"/>
-            <path id="svg_8" d="m87.747,41.4l-6.288,0a1,1 0 0 1 0,-2l6.288,0a1,1 0 1 1 0,2z"/>
-            <path id="svg_9" d="m90.734,33.414l-9.275,0a1,1 0 0 1 0,-2l9.275,0a1,1 0 0 1 0,2z"/>
-            <path id="svg_10" d="m87.747,24.773l-6.288,0a1,1 0 0 1 0,-2l6.288,0a1,1 0 0 1 0,2z"/>
-            <path id="svg_11" d="m90.734,16.787l-9.275,0a1,1 0 0 1 0,-2l9.275,0a1,1 0 1 1 0,2z"/>
-        </g>
-        </g>
-        </g>
+    )
+}
+
+export function Thermometer({progress=1, progressLabel="", milestones=[.25, .50, 1], labels=['15k', '30k', '45k']}) {
+    const bottomY = 120.57;
+    const topY = 6.9;
+    const distance = bottomY - topY;
+    const colors = ['#1b3f85', '#3b816c', '#b4b63b', 'rgb(211,144,68)'];
+    const milestoneProgressRects = milestones.map((milestone, i) => <Milestone key={milestone} label={labels[i] || ''} milestone={milestone} distance={distance} topY={topY} color={colors[i]} />)
+
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+            <mask id="mask2">
+                <rect x="0" y="0" width="100%" height="100%" fill="black"></rect>
+                <path d="M69,120.571999 q-.59,0 -1.185,-.033 a21.349,21.349 0 0 1 -19.879,-20.806 a21.1,21.1 0 0 1 10.293,-19.354 l3.89,-1.788 v-65.782 a4.881,4.881 0 1 1 11.762,0 v65.782 l3.89,1.788 a21.052,21.052 0 0 1 -8.771,40.193 " fill="white"></path>
+                <Milestone reverse label={""} milestone={progress} distance={distance} topY={topY} color={'black'} />
+            </mask>
+            <path d="M80.059998,74.059998 v-61.5 a11.56,11.56 0 0 0 -11.56,-11.56 a11.56,11.56 0 0 0 -11.56,11.559 v61.5 a27.743,27.743 0 1 0 23.12,0 " fill="#dbe2eb" visibility="visible"></path>
+            {milestoneProgressRects.reverse()}
+            <Milestone reverse label={progressLabel} milestone={progress} distance={distance} topY={topY} color={'transparent'} />
         </svg>
     )
 }
