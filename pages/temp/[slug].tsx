@@ -1,7 +1,7 @@
-import { GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import React from 'react';
 import cheerio from 'cheerio';
-import { Thermometer } from '../components/therm';
+import { Thermometer } from '../../components/therm';
 
 function formatCurrencyLabey(amount) {
     return Intl.NumberFormat('en-uk', {style: 'currency', currency: 'GBP', notation: 'compact'}).format(Math.floor(amount));
@@ -24,8 +24,9 @@ function parseMoney(str) {
     return Number(str.replace(/[^0-9\.]/g, ''))
 }
 
-export const getStaticProps: GetStaticProps = async () => {
-    const page = await fetch('https://www.crowdfunder.co.uk/we-say-no-to-no-deal');
+export const getStaticProps: GetStaticProps = async (ctx) => {
+    const { slug } = ctx.params;
+    const page = await fetch(`https://www.crowdfunder.co.uk/${slug}`);
     const body = await page.text();
     const $ = cheerio.load(body);
     const headers = $('h3').map((i, el) => $(el).text()).get();
@@ -38,5 +39,12 @@ export const getStaticProps: GetStaticProps = async () => {
             target: parseMoney(maybeTarget[0].split(' ')[0])
         },
         revalidate: 100
+    }
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+    return {
+        paths: [],
+        fallback: 'blocking'
     }
 }
