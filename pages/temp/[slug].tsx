@@ -9,7 +9,8 @@ function formatCurrencyLabey(amount) {
 
 export default function Temp({current, target}) {
     // const milestones = [15000, 30000, 45000, target]
-    const milestones = [10000, 50000, 100000, target];
+    // const milestones = [10000, 50000, 100000, target];
+    const milestones = Array(4).fill(0).map((it, i) => (i + 1) * (target/4))
     const labels = milestones.map(formatCurrencyLabey).slice(0, -1)
     return (
         <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
