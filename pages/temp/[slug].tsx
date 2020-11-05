@@ -13,7 +13,7 @@ export default function Temp({current, target}) {
     const milestones = Array(4).fill(0).map((it, i) => (i + 1) * (target/4))
     const labels = milestones.map(formatCurrencyLabey).slice(0, -1)
     return (
-        <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
+        <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
             <div style={{width: "75%"}}>
                 <Thermometer progress={current / target} progressLabel={formatCurrencyLabey(current)} labels={labels} milestones={milestones.map(it => it / target)} />
             </div>
