@@ -29,7 +29,7 @@ export default function Temp({current, target, theme}) {
     return (
         <Theme.Provider value={getTheme(theme)}>
             <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
-                <div style={{width: "75%"}}>
+                <div style={{width: "100%"}}>
                     <AnimatedCrowdTherm current={animProps.current} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
                 </div>
             </div>
