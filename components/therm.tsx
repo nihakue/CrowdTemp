@@ -8,11 +8,12 @@ function Milestone({label, milestone, distance, topY, color, isProgressMilestone
     const x = isProgressMilestone ? 97 : 0;
     const y = isProgressMilestone ? progressTop + progressHeight : progressTop
     const arrowSize = 2;
+    const nearBot = milestone <= .10;
     return (
         <g>
             {isProgressMilestone && <polyline fill="none" strokeWidth=".5" stroke={theme.fill} points={`${72 + arrowSize}, ${y - arrowSize} ${72}, ${y} ${72 + arrowSize}, ${y + arrowSize}`}></polyline>}
             <rect opacity={complete ? "1" : "0.7"} x="15" height={`${progressHeight}`} y={`${progressTop}`} width="100%" mask="url(#mask2)" fill={color}></rect>
-            {label && <text fill={theme.fill} style={{fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '11px'}} dominantBaseline="hanging" textAnchor="start" x={`${x}`} y={y + 2}>{label}</text> }
+            {label && <text fill={theme.fill} style={{fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '11px'}} dominantBaseline={nearBot ? 'auto' : 'hanging'} textAnchor="start" x={`${x}`} y={y + (nearBot ? -2 : 2)}>{label}</text> }
             {label && <line strokeDasharray={isProgressMilestone ? '0' : '3'} x1={isProgressMilestone ? 72 : x} y1={y+ 0.1} x2={isProgressMilestone ? x + 35 : x + 62} y2={y} stroke={theme.fill} strokeWidth=".5"></line> }
         </g>
     )

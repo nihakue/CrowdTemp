@@ -51,12 +51,13 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     const maybeTargetEls = $('span');
     const targetRegExp = /(£[,0-9]+) (stretch )?target/;
     const maybeTarget = maybeTargetEls.filter((i, el) =>targetRegExp.test($(el).text())).map((i, el) => $(el).text()).get()[0];
+    const isLeith = slug === 'leith-theatres-big-radiator-generator';
 
     return {
         props: {
             theme: rest[0] || null,
             current: parseMoney(current),
-            target: parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
+            target: isLeith ? 60000 : parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
         },
         revalidate: 10
     }
