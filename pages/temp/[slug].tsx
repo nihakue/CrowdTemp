@@ -2,20 +2,36 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import React from 'react';
 import cheerio from 'cheerio';
 import { Thermometer } from '../../components/therm';
+import {useSpring, animated, config} from 'react-spring'
+import { formatCurrencyLabel } from '../../components/utils';
 
-function formatCurrencyLabey(amount) {
-    return Intl.NumberFormat('en-uk', {style: 'currency', currency: 'GBP', notation: 'compact'}).format(Math.floor(amount));
+
+
+function CrowdTherm({current, target, ...props}) {
+    const progressLabel = formatCurrencyLabel(current)
+    return <Thermometer progress={current / target} progressLabel={progressLabel} {...props}/>
 }
+
+const AnimatedCrowdTherm = animated(CrowdTherm)
+
 
 export default function Temp({current, target}) {
     // const milestones = [15000, 30000, 45000, target]
     // const milestones = [10000, 50000, 100000, target];
+    const animProps = useSpring({
+        current,
+        from: {
+            current: 0
+        },
+        config: config.slow,
+    });
+
     const milestones = Array(4).fill(0).map((it, i) => (i + 1) * (target/4))
-    const labels = milestones.map(formatCurrencyLabey).slice(0, -1)
+    const labels = milestones.map(formatCurrencyLabel).slice(0, -1)
     return (
         <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
             <div style={{width: "75%"}}>
-                <Thermometer progress={current / target} progressLabel={formatCurrencyLabey(current)} labels={labels} milestones={milestones.map(it => it / target)} />
+                <AnimatedCrowdTherm current={animProps.current} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
             </div>
         </div>
         )
