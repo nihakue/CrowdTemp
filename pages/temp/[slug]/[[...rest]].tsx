@@ -1,11 +1,10 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import React from 'react';
 import cheerio from 'cheerio';
-import { Thermometer } from '../../components/therm';
+import { Thermometer } from '../../../components/therm';
 import {useSpring, animated, config} from 'react-spring'
-import { formatCurrencyLabel } from '../../components/utils';
-
-
+import { formatCurrencyLabel } from '../../../components/utils';
+import { Theme, getTheme } from '../../../components/theme';
 
 function CrowdTherm({current, target, ...props}) {
     const progressLabel = formatCurrencyLabel(current)
@@ -14,8 +13,7 @@ function CrowdTherm({current, target, ...props}) {
 
 const AnimatedCrowdTherm = animated(CrowdTherm)
 
-
-export default function Temp({current, target}) {
+export default function Temp({current, target, theme}) {
     // const milestones = [15000, 30000, 45000, target]
     // const milestones = [10000, 50000, 100000, target];
     const animProps = useSpring({
@@ -29,11 +27,13 @@ export default function Temp({current, target}) {
     const milestones = Array(4).fill(0).map((it, i) => (i + 1) * (target/4))
     const labels = milestones.map(formatCurrencyLabel).slice(0, -1)
     return (
-        <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
-            <div style={{width: "75%"}}>
-                <AnimatedCrowdTherm current={animProps.current} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
+        <Theme.Provider value={getTheme(theme)}>
+            <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
+                <div style={{width: "75%"}}>
+                    <AnimatedCrowdTherm current={animProps.current} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
+                </div>
             </div>
-        </div>
+        </Theme.Provider>
         )
 }
 
@@ -42,7 +42,7 @@ function parseMoney(str) {
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-    const { slug } = ctx.params;
+    const { slug, rest = [] } = ctx.params;
     const page = await fetch(`https://www.crowdfunder.co.uk/${slug}`);
     const body = await page.text();
     const $ = cheerio.load(body);
@@ -54,6 +54,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
     return {
         props: {
+            theme: rest[0] || null,
             current: parseMoney(current),
             target: parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
         },

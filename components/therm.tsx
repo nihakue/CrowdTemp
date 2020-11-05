@@ -1,4 +1,8 @@
+import { useTheme } from "./theme";
+
 function Milestone({label, milestone, distance, topY, color, isProgressMilestone=false, complete=false}) {
+    const theme = useTheme();
+    
     const progressHeight = (isProgressMilestone ? 1 - milestone : milestone) * distance;
     const progressTop = isProgressMilestone? topY : topY + (distance - progressHeight)
     const x = isProgressMilestone ? 97 : 0;
@@ -6,10 +10,10 @@ function Milestone({label, milestone, distance, topY, color, isProgressMilestone
     const arrowSize = 2;
     return (
         <g>
-            {isProgressMilestone && <polyline fill="none" strokeWidth=".5" stroke="black" points={`${72 + arrowSize}, ${y - arrowSize} ${72}, ${y} ${72 + arrowSize}, ${y + arrowSize}`}></polyline>}
+            {isProgressMilestone && <polyline fill="none" strokeWidth=".5" stroke={theme.fill} points={`${72 + arrowSize}, ${y - arrowSize} ${72}, ${y} ${72 + arrowSize}, ${y + arrowSize}`}></polyline>}
             <rect opacity={complete ? "1" : "0.7"} x="15" height={`${progressHeight}`} y={`${progressTop}`} width="100%" mask="url(#mask2)" fill={color}></rect>
-            {label && <text style={{fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '11px'}} dominantBaseline="hanging" textAnchor="start" x={`${x}`} y={y + 2}>{label}</text> }
-            {label && <line strokeDasharray={isProgressMilestone ? '0' : '3'} x1={isProgressMilestone ? 72 : x} y1={y+ 0.1} x2={isProgressMilestone ? x + 35 : x + 65} y2={y} stroke="black" strokeWidth=".5"></line> }
+            {label && <text fill={theme.fill} style={{fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '11px'}} dominantBaseline="hanging" textAnchor="start" x={`${x}`} y={y + 2}>{label}</text> }
+            {label && <line strokeDasharray={isProgressMilestone ? '0' : '3'} x1={isProgressMilestone ? 72 : x} y1={y+ 0.1} x2={isProgressMilestone ? x + 35 : x + 65} y2={y} stroke={theme.fill} strokeWidth=".5"></line> }
         </g>
     )
 }
