@@ -14,7 +14,7 @@ function CrowdTherm({current, target, ...props}) {
 const AnimatedCrowdTherm = animated(CrowdTherm)
 
 export default function Temp({current, target, theme}) {
-    // const milestones = [15000, 30000, 45000, target]
+    const milestones = [15000, 30000, 45000, target]
     // const milestones = [10000, 50000, 100000, target];
     const animProps = useSpring({
         current,
@@ -24,7 +24,7 @@ export default function Temp({current, target, theme}) {
         config: config.slow,
     });
 
-    const milestones = Array(4).fill(0).map((it, i) => (i + 1) * (target/4))
+    // const milestones = Array(4).fill(0).map((it, i) => (i + 1) * (target/4))
     const labels = milestones.map(formatCurrencyLabel).slice(0, -1)
     return (
         <Theme.Provider value={getTheme(theme)}>
