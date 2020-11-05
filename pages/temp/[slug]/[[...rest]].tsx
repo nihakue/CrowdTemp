@@ -58,7 +58,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
             current: parseMoney(current),
             target: parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
         },
-        revalidate: 100
+        revalidate: 10
     }
 }
 
