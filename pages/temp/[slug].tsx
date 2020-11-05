@@ -48,12 +48,14 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     const $ = cheerio.load(body);
     const headers = $('h3').map((i, el) => $(el).text()).get();
     const current = headers.find(it => /^£[,0-9]+/.test(it));
-    const maybeTarget = $('span').filter((i, el) =>/^£[,0-9]+ target/.test($(el).text())).map((i, el) => $(el).text()).get();
-    
+    const maybeTargetEls = $('span');
+    const targetRegExp = /(£[,0-9]+) (stretch )?target/;
+    const maybeTarget = maybeTargetEls.filter((i, el) =>targetRegExp.test($(el).text())).map((i, el) => $(el).text()).get()[0];
+
     return {
         props: {
             current: parseMoney(current),
-            target: parseMoney(maybeTarget[0].split(' ')[0])
+            target: parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
         },
         revalidate: 100
     }
