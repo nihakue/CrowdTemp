@@ -22,7 +22,7 @@ export function Thermometer({progress=1, progressLabel="", milestones=[.25, .50,
     const milestoneProgressRects = milestones.map((milestone, i) => <Milestone key={milestone} complete={milestone <= progress} label={labels[i] || ''} milestone={milestone} distance={distance} topY={topY} color={colors[i]} />)
 
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" preserveAspectRatio="xMinYMin meet">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130" preserveAspectRatio="xMinYMin meet">
             <mask id="mask2">
                 <rect x="0" y="0" width="100%" height="100%" fill="black"></rect>
                 <path d="M69,120.571999 q-.59,0 -1.185,-.033 a21.349,21.349 0 0 1 -19.879,-20.806 a21.1,21.1 0 0 1 10.293,-19.354 l3.89,-1.788 v-65.782 a4.881,4.881 0 1 1 11.762,0 v65.782 l3.89,1.788 a21.052,21.052 0 0 1 -8.771,40.193 " fill="white"></path>
