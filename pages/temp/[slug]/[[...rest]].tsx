@@ -8,12 +8,13 @@ import { Theme, getTheme } from '../../../components/theme';
 
 function CrowdTherm({current, target, ...props}) {
     const progressLabel = formatCurrencyLabel(current)
+    console.log(current, target, props);
     return <Thermometer progress={current / target} progressLabel={progressLabel} {...props}/>
 }
 
 const AnimatedCrowdTherm = animated(CrowdTherm)
 
-export default function Temp({current, target, theme}) {
+export default function Temp({current, target, theme, isStatic}) {
     const milestones = [15000, 30000, 45000, target]
     // const milestones = [10000, 50000, 100000, target];
     const animProps = useSpring({
@@ -26,11 +27,13 @@ export default function Temp({current, target, theme}) {
 
     // const milestones = Array(4).fill(0).map((it, i) => (i + 1) * (target/4))
     const labels = milestones.map(formatCurrencyLabel).slice(0, -1)
+    const Therm = isStatic ? CrowdTherm : AnimatedCrowdTherm;
+    const curr = isStatic ? current : animProps.current;
     return (
         <Theme.Provider value={getTheme(theme)}>
             <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
                 <div style={{width: "100%"}}>
-                    <AnimatedCrowdTherm current={animProps.current} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
+                    <Therm current={curr} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
                 </div>
             </div>
         </Theme.Provider>
@@ -56,6 +59,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     return {
         props: {
             theme: rest[0] || null,
+            isStatic: !!rest[1],
             current: parseMoney(current),
             target: isLeith ? 60000 : parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
         },
