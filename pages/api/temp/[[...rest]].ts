@@ -1,8 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import https from 'https';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 
 export async function proxyAssetRequest(
+  assetUrl: string | URL,
   destinationUrl: string | URL,
   oreq: NextApiRequest,
   ores: NextApiResponse
@@ -29,17 +30,23 @@ export async function proxyAssetRequest(
       });
 
     proxy.write(JSON.stringify({
-      url: "https://crowd-temp.vercel.app/temp/leith-theatres-big-radiator-generator/light/static",
+      url: assetUrl,
       options: {
         fullPage: true,
         type: "png",
+        omitBackground: false
       }
     }));
     proxy.end();
   });
 }
 
-export default async (oreq, ores) => {
+const handler: NextApiHandler = async (oreq, ores) => {
+  const { rest = []} = oreq.query;
+  const slug = rest[0] || "leith-theatres-big-radiator-generator";
   ores.setHeader('Content-Type', 'image/png')
-  await proxyAssetRequest(`https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores);
+  ores.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=10');
+  await proxyAssetRequest(`https://crowd-temp.vercel.app/temp/${slug}/${rest[1] || 'light'}/static`, `https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores);
 }
+
+export default handler;
