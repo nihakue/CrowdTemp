@@ -1,3 +1,3 @@
 export default function Index() {
-    return <h1>404 not found</h1>
+    return <img src="/api/temp"></img>
 }
