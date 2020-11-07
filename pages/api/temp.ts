@@ -41,5 +41,5 @@ export async function proxyAssetRequest(
 
 export default async (oreq, ores) => {
   ores.setHeader('Content-Type', 'image/png')
-  await proxyAssetRequest('https://chrome.browserless.io/screenshot', oreq, ores);
+  await proxyAssetRequest(`https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores);
 }
