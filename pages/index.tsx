@@ -1,6 +1,12 @@
 import Head from 'next/head';
+import { useEffect } from 'react';
 
 export default function Index() {
+    useEffect(() => {
+        if (window) {
+            window.location.href="https://www.crowdfunder.co.uk/leith-theatres-big-radiator-generator";
+        }
+    }, [])
     return (
         <Head>
             <title></title>
