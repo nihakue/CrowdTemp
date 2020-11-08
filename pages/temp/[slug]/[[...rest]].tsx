@@ -8,15 +8,14 @@ import { Theme, getTheme } from '../../../components/theme';
 
 function CrowdTherm({current, target, ...props}) {
     const progressLabel = formatCurrencyLabel(current)
-    console.log(current, target, props);
     return <Thermometer progress={current / target} progressLabel={progressLabel} {...props}/>
 }
 
 const AnimatedCrowdTherm = animated(CrowdTherm)
 
-export default function Temp({current, target, theme, isStatic}) {
+export default function Temp({current, target, theme, isStatic, size}) {
     const milestones = [15000, 30000, 45000, target]
-    // const milestones = [10000, 50000, 100000, target];
+    const [width, height] = (!size || size === 'default') ? ['100%', '100%'] : size.split('x').map(it => `${it}px`);
     const animProps = useSpring({
         current,
         from: {
@@ -31,7 +30,7 @@ export default function Temp({current, target, theme, isStatic}) {
     const curr = isStatic ? current : animProps.current;
     return (
         <Theme.Provider value={getTheme(theme)}>
-            <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
+            <div style={{width, height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
                 <div style={{width: "100%"}}>
                     <Therm current={curr} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
                 </div>
@@ -60,6 +59,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
         props: {
             theme: rest[0] || null,
             isStatic: !!rest[1],
+            size: rest[2] || 'default',
             current: parseMoney(current),
             target: isLeith ? 60000 : parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
         },

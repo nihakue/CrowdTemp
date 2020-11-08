@@ -44,9 +44,11 @@ export async function proxyAssetRequest(
 const handler: NextApiHandler = async (oreq, ores) => {
   const { rest = []} = oreq.query;
   const slug = rest[0] || "leith-theatres-big-radiator-generator";
+  const theme = rest[1] || 'light';
+  const size = rest[2] || 'default'
   ores.setHeader('Content-Type', 'image/png')
   ores.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=10');
-  await proxyAssetRequest(`https://crowd-temp.vercel.app/temp/${slug}/${rest[1] || 'light'}/static`, `https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores);
+  await proxyAssetRequest(`https://crowd-temp.vercel.app/temp/${slug}/${theme}/static/${size}`, `https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores);
 }
 
 export default handler;
