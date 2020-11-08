@@ -3,7 +3,6 @@ import https from 'https';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 
 export async function proxyAssetRequest(
-  assetUrl: string | URL,
   destinationUrl: string | URL,
   oreq: NextApiRequest,
   ores: NextApiResponse,
@@ -31,13 +30,9 @@ export async function proxyAssetRequest(
       });
 
     proxy.write(JSON.stringify({
-      url: assetUrl,
-      options: {
-        type: "png",
-        omitBackground: false,
-        ...options,
-      }
-    }));
+      ...options
+    }
+    ));
     proxy.end();
   });
 }
@@ -49,19 +44,30 @@ const handler: NextApiHandler = async (oreq, ores) => {
   const size = rest[3] || 'default'
   const url = `https://crowd-temp.vercel.app/temp/${slug}/${theme}/static/${size}`;
   const doCrop = size !== 'default';
+  const [ width, height ] = size.split('x');
+  const clipOptions = doCrop ? {clip: {
+    x: 0,
+    y: 0,
+    width: width,
+    height: height,
+  }} : {}
+  const viewportOptions = doCrop ? {viewport: {
+    width,
+    height
+  }} : {}
   const options = {
-    fullPage: !doCrop,
-    ...(doCrop ? {clip: {
-      x: 0,
-      y: 0,
-      width: size.split('x')[0],
-      height: size.split('x')[1]
-    }} : {})
+    url,
+    ...viewportOptions,
+    options: {
+      type: "png",
+      omitBackground: false,
+      fullPage: !doCrop,
+      ...clipOptions,
+    }
   }
-  console.log(url);
   ores.setHeader('Content-Type', 'image/png')
   ores.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=10');
-  await proxyAssetRequest(url, `https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores, options);
+  await proxyAssetRequest(`https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores, options);
 }
 
 export default handler;

@@ -30,7 +30,7 @@ export default function Temp({current, target, theme, isStatic, size}) {
     const curr = isStatic ? current : animProps.current;
     return (
         <Theme.Provider value={getTheme(theme)}>
-            <div style={{width, height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '25px'}}>
+            <div style={{width, height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
                 <div style={{width: "100%", height: '100%', position: 'relative'}}>
                     <Therm current={curr} target={target} labels={labels} milestones={milestones.map(it => it / target)} />
                 </div>
