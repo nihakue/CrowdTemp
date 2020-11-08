@@ -59,7 +59,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
         props: {
             theme: rest[0] || null,
             isStatic: !!rest[1],
-            size: rest[3] || 'default',
+            size: rest[2] || 'default',
             current: parseMoney(current),
             target: isLeith ? 60000 : parseMoney(maybeTarget.split(' ').find(part => part.startsWith('£')))
         },
