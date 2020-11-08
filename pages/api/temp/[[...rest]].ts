@@ -7,7 +7,7 @@ export async function proxyAssetRequest(
   destinationUrl: string | URL,
   oreq: NextApiRequest,
   ores: NextApiResponse,
-  fullPage: Boolean
+  options?: any
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const proxy = https
@@ -33,9 +33,9 @@ export async function proxyAssetRequest(
     proxy.write(JSON.stringify({
       url: assetUrl,
       options: {
-        fullPage,
         type: "png",
-        omitBackground: false
+        omitBackground: false,
+        ...options,
       }
     }));
     proxy.end();
@@ -48,10 +48,20 @@ const handler: NextApiHandler = async (oreq, ores) => {
   const theme = rest[1] || 'light';
   const size = rest[3] || 'default'
   const url = `https://crowd-temp.vercel.app/temp/${slug}/${theme}/static/${size}`;
+  const doCrop = size !== 'default';
+  const options = {
+    fullPage: !doCrop,
+    ...(doCrop ? {clip: {
+      x: 0,
+      y: 0,
+      width: size.split('x')[0],
+      height: size.split('x')[1]
+    }} : {})
+  }
   console.log(url);
   ores.setHeader('Content-Type', 'image/png')
   ores.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=10');
-  await proxyAssetRequest(url, `https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores, size === 'default');
+  await proxyAssetRequest(url, `https://chrome.browserless.io/screenshot?token=${process.env.BROWSERLESS_TOKEN}`, oreq, ores, options);
 }
 
 export default handler;
